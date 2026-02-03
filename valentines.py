@@ -11,12 +11,14 @@ import streamlit as st
 import random
 import os
 
+
 # Page config
 st.set_page_config(
     page_title="For Caitlin 💌",
     page_icon="💖",
     layout="centered"
 )
+
 
 # Pink background
 st.markdown(
@@ -25,15 +27,11 @@ st.markdown(
     .stApp {
         background-color: pink;
     }
-    .center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 # Title
 st.markdown(
@@ -41,51 +39,89 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
 st.write("")
 st.write("")
 
-# Session state
+
+# -------------------------------
+# Session State
+# -------------------------------
+
 if "show_gifs" not in st.session_state:
     st.session_state.show_gifs = False
 
-if "no_margin" not in st.session_state:
-    st.session_state.no_margin = random.randint(0, 50)
+if "show_error" not in st.session_state:
+    st.session_state.show_error = False
 
-# Center buttons horizontally
-st.markdown("<div class='center'>", unsafe_allow_html=True)
+if "no_offset" not in st.session_state:
+    st.session_state.no_offset = random.randint(0, 40)
 
-# "Yes" button
-yes_clicked = st.button("Yes 💖")
+
+# -------------------------------
+# Centered Buttons
+# -------------------------------
+
+left, middle, right = st.columns([1, 2, 1])
+
+with middle:
+
+    col_yes, col_space, col_no = st.columns([1, 0.5, 1])
+
+    with col_yes:
+        yes_clicked = st.button("Yes 💖", use_container_width=True)
+
+    with col_no:
+        no_clicked = st.button("No 🙄", use_container_width=True)
+
+
+# -------------------------------
+# Button Logic
+# -------------------------------
+
 if yes_clicked:
     st.session_state.show_gifs = True
+    st.session_state.show_error = False
 
-# Add horizontal spacing
-st.markdown("&nbsp;&nbsp;&nbsp;&nbsp;", unsafe_allow_html=True)
 
-# "No" button with top margin (moves)
-no_clicked = st.button("No 🙄")
 if no_clicked:
-    st.session_state.no_margin = random.randint(0, 50)
+    st.session_state.show_error = True
+    st.session_state.no_offset = random.randint(0, 40)
     st.rerun()
 
-st.markdown("</div>", unsafe_allow_html=True)
 
-# Move "No" button visually by top margin
-st.markdown(
-    f"<div style='margin-top:{st.session_state.no_margin}px'></div>",
-    unsafe_allow_html=True
-)
+# -------------------------------
+# Fake Error Popup (Modal)
+# -------------------------------
 
-# Show GIFs after YES
+if st.session_state.show_error:
+
+    with st.modal("⚠️ System Error"):
+
+        st.error("❌ ERROR: You cannot choose that option.")
+
+        st.write("")
+        st.write("Please try again 😘💖")
+
+        if st.button("❎ Close"):
+            st.session_state.show_error = False
+            st.rerun()
+
+
+# -------------------------------
+# Show GIFs After YES
+# -------------------------------
+
 if st.session_state.show_gifs:
+
     st.balloons()
+
     st.success("I knew you'd say yes 😘💖 I love you so much ❤️")
 
     st.write("")
 
     colA, colB = st.columns(2)
 
-    # Use the correct folder and filenames
     gif1_path = os.path.join("Gifs", "Us_1.gif")
     gif2_path = os.path.join("Gifs", "Us_2.gif")
 
@@ -94,6 +130,7 @@ if st.session_state.show_gifs:
 
     with colB:
         st.image(gif2_path, use_container_width=True)
+
 
     st.markdown(
         "<h3 style='text-align:center;color:#cc0066;'>Forever Us 💞</h3>",
