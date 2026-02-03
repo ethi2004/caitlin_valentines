@@ -29,19 +29,19 @@ if "show_gifs" not in st.session_state:
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
+if "error_countdown" not in st.session_state:
+    st.session_state.error_countdown = 5  # countdown in seconds
+
 # -----------------------------
 # CSS Styling
 # -----------------------------
 st.markdown(
     """
     <style>
-    /* Pink background */
     .stApp {
         background-color: #ffc0cb;
-        color: #fffdd0; /* default cream text */
+        color: #fffdd0;
     }
-
-    /* Main title */
     .title-text {
         text-align: center;
         font-size: 32px;
@@ -49,22 +49,16 @@ st.markdown(
         color: #fffdd0;
         margin-top: 30px;
     }
-
-    /* Subtitle */
     .subtitle-text {
         text-align: center;
         font-size: 20px;
         color: #fffdd0;
         margin-bottom: 40px;
     }
-
-    /* Buttons */
     div.stButton > button {
         font-size: 16px;
         height: 50px;
     }
-
-    /* GIF captions */
     .gif-caption {
         text-align: center;
         color: #fffdd0;
@@ -72,8 +66,6 @@ st.markdown(
         margin-top: 10px;
         margin-bottom: 20px;
     }
-
-    /* Full-screen popup overlay container */
     .popup-container {
         position: fixed;
         top: 0;
@@ -86,8 +78,6 @@ st.markdown(
         align-items: center;
         z-index: 9999;
     }
-
-    /* Popup box */
     .popup-box {
         background-color: white;
         border-radius: 12px;
@@ -98,18 +88,15 @@ st.markdown(
         box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
         z-index: 10000;
     }
-
     .popup-title {
         font-size: 22px;
         font-weight: bold;
         margin-bottom: 10px;
     }
-
     .popup-text {
         font-size: 16px;
         margin-bottom: 0;
     }
-
     </style>
     """,
     unsafe_allow_html=True
@@ -124,7 +111,6 @@ st.markdown(
         Hiiiii baby 💕<br><br>
         Will you be my Valentine?
     </div>
-
     <div class="subtitle-text">
         💖💌💖
     </div>
@@ -136,7 +122,6 @@ st.markdown(
 # Centered Buttons
 # -----------------------------
 col1, col2, col3 = st.columns([1,2,1])
-
 with col2:
     yes_clicked = st.button("Yes 💖", use_container_width=True)
     no_clicked = st.button("No 🙄", use_container_width=True)
@@ -151,52 +136,37 @@ if yes_clicked:
 if no_clicked:
     st.session_state.show_error = True
     st.session_state.show_gifs = False
+    st.session_state.error_countdown = 5  # reset countdown
 
 # -----------------------------
-# Error Popup with 5-second countdown
+# Error Popup with Countdown
 # -----------------------------
 if st.session_state.show_error:
     popup_placeholder = st.empty()
 
-    with popup_placeholder.container():
-        st.markdown(
-            """
-            <div class="popup-container">
-                <div class="popup-box">
-                    <div class="popup-title">⚠️ SYSTEM ERROR</div>
-                    <div class="popup-text" id="countdown-text">
-                        ❌ ERROR: You cannot choose that option.<br>
-                        Please try again 💖<br>
-                        (Closing in 5 seconds)
-                    </div>
+    popup_placeholder.markdown(
+        f"""
+        <div class="popup-container">
+            <div class="popup-box">
+                <div class="popup-title">⚠️ SYSTEM ERROR</div>
+                <div class="popup-text">
+                    ❌ ERROR: You cannot choose that option.<br>
+                    Please try again 💖<br>
+                    (Closing in {st.session_state.error_countdown} seconds)
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        # Countdown from 5 to 0
-        for i in range(5, 0, -1):
-            popup_placeholder.markdown(
-                f"""
-                <div class="popup-container">
-                    <div class="popup-box">
-                        <div class="popup-title">⚠️ SYSTEM ERROR</div>
-                        <div class="popup-text" id="countdown-text">
-                            ❌ ERROR: You cannot choose that option.<br>
-                            Please try again 💖<br>
-                            (Closing in {i} seconds)
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            time.sleep(1)
-
-        # Hide popup after countdown
-        st.session_state.show_error = False
+    # Reduce countdown by 1 second on each rerun
+    if st.session_state.error_countdown > 0:
+        time.sleep(1)  # wait 1 second
+        st.session_state.error_countdown -= 1
         st.experimental_rerun()
+    else:
+        st.session_state.show_error = False
 
 # -----------------------------
 # Show GIFs if Yes
