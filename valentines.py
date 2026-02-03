@@ -10,16 +10,14 @@ Original file is located at
 import streamlit as st
 import os
 
-
 # -----------------------------
-# Page Config
+# Page config
 # -----------------------------
 st.set_page_config(
     page_title="For Caitlin 💖",
     page_icon="💌",
     layout="centered"
 )
-
 
 # -----------------------------
 # Session State
@@ -30,62 +28,71 @@ if "show_gifs" not in st.session_state:
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
-
 # -----------------------------
-# Pink Background + Popup CSS
+# CSS Styling
 # -----------------------------
 st.markdown(
     """
     <style>
-
-    body {
+    /* Pink background */
+    .stApp {
         background-color: #ffc0cb;
+        color: #fffdd0; /* default cream text */
     }
 
-    .main {
-        background-color: #ffc0cb;
-    }
-
+    /* Main title */
     .title-text {
         text-align: center;
         font-size: 32px;
         font-weight: bold;
-        color: black;
+        color: #fffdd0;
         margin-top: 30px;
     }
 
+    /* Subtitle */
     .subtitle-text {
         text-align: center;
         font-size: 20px;
+        color: #fffdd0;
         margin-bottom: 40px;
-        color: black;
     }
 
-    /* Popup Overlay */
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 9998;
+    /* Buttons */
+    div.stButton > button {
+        font-size: 16px;
+        height: 50px;
     }
 
-    /* Popup Box */
-    .popup-box {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
+    /* GIF captions */
+    .gif-caption {
         text-align: center;
-        width: 320px;
-        z-index: 9999;
-        box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+        color: #fffdd0;
+        font-size: 20px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Error popup container */
+    .error-box {
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
         color: black;
+        width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .error-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .error-text {
+        font-size: 16px;
+        margin-bottom: 15px;
     }
 
     </style>
@@ -93,9 +100,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 # -----------------------------
-# Main Text
+# Main Title
 # -----------------------------
 st.markdown(
     """
@@ -111,22 +117,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 # -----------------------------
 # Centered Buttons
 # -----------------------------
-left, middle, right = st.columns([1, 2, 1])
+col1, col2, col3 = st.columns([1,2,1])
 
-with middle:
-
-    col_yes, col_no = st.columns([1, 1])
-
-    with col_yes:
-        yes_clicked = st.button("Yes 💖", use_container_width=True)
-
-    with col_no:
-        no_clicked = st.button("No 🙄", use_container_width=True)
-
+with col2:
+    yes_clicked = st.button("Yes 💖", use_container_width=True)
+    no_clicked = st.button("No 🙄", use_container_width=True)
 
 # -----------------------------
 # Button Logic
@@ -135,67 +133,54 @@ if yes_clicked:
     st.session_state.show_gifs = True
     st.session_state.show_error = False
 
-
 if no_clicked:
     st.session_state.show_error = True
-    st.rerun()
-
+    st.session_state.show_gifs = False
 
 # -----------------------------
-# Error Popup (FIXED)
+# Error Popup
 # -----------------------------
 if st.session_state.show_error:
-
+    # Popup container
     st.markdown(
         """
-        <div class="popup-overlay"></div>
-
-        <div class="popup-box">
-
-            <h2>⚠️ SYSTEM ERROR</h2>
-
-            <p>
-                ❌ ERROR: You cannot choose that option.<br><br>
+        <div class="error-box">
+            <div class="error-title">⚠️ SYSTEM ERROR</div>
+            <div class="error-text">
+                ❌ ERROR: You cannot choose that option.<br>
                 Please try again 💖
-            </p>
-
+            </div>
         </div>
         """,
         unsafe_allow_html=True
     )
-
-    # Put close button AFTER popup so it's clickable
-    close_popup = st.button("❌ Close Error")
-
-    if close_popup:
+    # Close button inside Streamlit
+    if st.button("❌ Close"):
         st.session_state.show_error = False
         st.rerun()
 
-
 # -----------------------------
-# Show GIFs When Yes
+# Show GIFs if Yes
 # -----------------------------
 if st.session_state.show_gifs:
-
     st.markdown("---")
-
     st.markdown(
-        "<h2 style='text-align:center; color:black;'>Us 💖</h2>",
+        "<div class='gif-caption'>Us 💖</div>",
         unsafe_allow_html=True
     )
 
     gif1_path = os.path.join("Gifs", "Us_1.gif")
     gif2_path = os.path.join("Gifs", "Us_2.gif")
 
-    col1, col2 = st.columns(2)
+    colA, colB = st.columns(2)
 
-    with col1:
+    with colA:
         st.image(gif1_path, use_container_width=True)
 
-    with col2:
+    with colB:
         st.image(gif2_path, use_container_width=True)
 
     st.markdown(
-        "<h3 style='text-align:center; color:black;'>I love you so much ❤️😘</h3>",
+        "<div class='gif-caption'>I love you so much ❤️😘</div>",
         unsafe_allow_html=True
     )
