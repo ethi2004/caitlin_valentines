@@ -72,29 +72,27 @@ st.markdown(
         margin-bottom: 20px;
     }
 
-    /* Full-screen popup overlay */
-    .popup-overlay {
+    /* Full-screen popup overlay container */
+    .popup-container {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         background: rgba(0,0,0,0.5);
-        z-index: 9998;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
     }
 
     /* Popup box */
     .popup-box {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         background-color: white;
         border-radius: 12px;
         padding: 25px;
         width: 350px;
         text-align: center;
-        z-index: 9999;
         color: black;
         box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
     }
@@ -107,17 +105,7 @@ st.markdown(
 
     .popup-text {
         font-size: 16px;
-        margin-bottom: 15px;
-    }
-
-    .popup-button {
-        font-size: 16px;
-        padding: 8px 20px;
-        background-color: #ff4d88;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
+        margin-bottom: 20px;
     }
 
     </style>
@@ -163,26 +151,32 @@ if no_clicked:
     st.session_state.show_gifs = False
 
 # -----------------------------
-# Error Popup
+# Error Popup (True Modal)
 # -----------------------------
 if st.session_state.show_error:
-    st.markdown(
-        """
-        <div class="popup-overlay"></div>
-        <div class="popup-box">
-            <div class="popup-title">⚠️ SYSTEM ERROR</div>
-            <div class="popup-text">
-                ❌ ERROR: You cannot choose that option.<br>
-                Please try again 💖
+    popup_container = st.container()  # container for the popup
+
+    with popup_container:
+        # Create full-screen overlay
+        st.markdown(
+            """
+            <div class="popup-container">
+                <div class="popup-box">
+                    <div class="popup-title">⚠️ SYSTEM ERROR</div>
+                    <div class="popup-text">
+                        ❌ ERROR: You cannot choose that option.<br>
+                        Please try again 💖
+                    </div>
+                </div>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    # Close button inside Streamlit
-    if st.button("❌ Close Error"):
-        st.session_state.show_error = False
-        st.rerun()
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Close button inside the container
+        if st.button("❌ Close Error"):
+            st.session_state.show_error = False
+            st.rerun()
 
 # -----------------------------
 # Show GIFs if Yes
