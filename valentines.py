@@ -9,6 +9,7 @@ Original file is located at
 
 import streamlit as st
 import os
+import time
 
 # -----------------------------
 # Page config
@@ -152,35 +153,50 @@ if no_clicked:
     st.session_state.show_gifs = False
 
 # -----------------------------
-# Error Popup (Click Outside to Close)
+# Error Popup with 5-second countdown
 # -----------------------------
 if st.session_state.show_error:
-    # placeholder container for popup
     popup_placeholder = st.empty()
 
     with popup_placeholder.container():
-        # Full-screen button behind popup to close when clicked
-        if st.button("", key="overlay_button", help="Click outside the popup to close",
-                     args=None):
-            st.session_state.show_error = False
-            st.rerun()
-
-        # HTML for popup box (on top of the button)
         st.markdown(
             """
             <div class="popup-container">
                 <div class="popup-box">
                     <div class="popup-title">⚠️ SYSTEM ERROR</div>
-                    <div class="popup-text">
+                    <div class="popup-text" id="countdown-text">
                         ❌ ERROR: You cannot choose that option.<br>
                         Please try again 💖<br>
-                        (Click anywhere to try again)
+                        (Closing in 5 seconds)
                     </div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
+
+        # Countdown from 5 to 0
+        for i in range(5, 0, -1):
+            popup_placeholder.markdown(
+                f"""
+                <div class="popup-container">
+                    <div class="popup-box">
+                        <div class="popup-title">⚠️ SYSTEM ERROR</div>
+                        <div class="popup-text" id="countdown-text">
+                            ❌ ERROR: You cannot choose that option.<br>
+                            Please try again 💖<br>
+                            (Closing in {i} seconds)
+                        </div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            time.sleep(1)
+
+        # Hide popup after countdown
+        st.session_state.show_error = False
+        st.experimental_rerun()
 
 # -----------------------------
 # Show GIFs if Yes
