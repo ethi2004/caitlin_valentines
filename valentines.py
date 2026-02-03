@@ -8,7 +8,6 @@ Original file is located at
 """
 
 import streamlit as st
-import random
 import os
 
 
@@ -51,7 +50,7 @@ st.markdown(
         text-align: center;
         font-size: 32px;
         font-weight: bold;
-        color: #cc0066;
+        color: black;
         margin-top: 30px;
     }
 
@@ -59,6 +58,7 @@ st.markdown(
         text-align: center;
         font-size: 20px;
         margin-bottom: 40px;
+        color: black;
     }
 
     /* Popup Overlay */
@@ -79,12 +79,13 @@ st.markdown(
         left: 50%;
         transform: translate(-50%, -50%);
         background: white;
-        padding: 30px;
+        padding: 25px;
         border-radius: 12px;
         text-align: center;
         width: 320px;
         z-index: 9999;
         box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+        color: black;
     }
 
     </style>
@@ -118,7 +119,7 @@ left, middle, right = st.columns([1, 2, 1])
 
 with middle:
 
-    col_yes, col_space, col_no = st.columns([1, 0.5, 1])
+    col_yes, col_no = st.columns([1, 1])
 
     with col_yes:
         yes_clicked = st.button("Yes 💖", use_container_width=True)
@@ -141,24 +142,30 @@ if no_clicked:
 
 
 # -----------------------------
-# Error Popup
+# Error Popup (FIXED)
 # -----------------------------
 if st.session_state.show_error:
 
-    popup_html = """
-    <div class="popup-overlay"></div>
-    <div class="popup-box">
-        <h2 style="color:red;">⚠️ SYSTEM ERROR</h2>
-        <p style="font-size:16px; margin-top:15px;">
-            ❌ ERROR: You cannot choose that option.<br><br>
-            Please try again 💖
-        </p>
-    </div>
-    """
+    st.markdown(
+        """
+        <div class="popup-overlay"></div>
 
-    st.markdown(popup_html, unsafe_allow_html=True)
+        <div class="popup-box">
 
-    close_popup = st.button("❌ Close")
+            <h2>⚠️ SYSTEM ERROR</h2>
+
+            <p>
+                ❌ ERROR: You cannot choose that option.<br><br>
+                Please try again 💖
+            </p>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Put close button AFTER popup so it's clickable
+    close_popup = st.button("❌ Close Error")
 
     if close_popup:
         st.session_state.show_error = False
@@ -173,7 +180,7 @@ if st.session_state.show_gifs:
     st.markdown("---")
 
     st.markdown(
-        "<h2 style='text-align:center; color:#cc0066;'>Us 💖</h2>",
+        "<h2 style='text-align:center; color:black;'>Us 💖</h2>",
         unsafe_allow_html=True
     )
 
@@ -189,6 +196,6 @@ if st.session_state.show_gifs:
         st.image(gif2_path, use_container_width=True)
 
     st.markdown(
-        "<h3 style='text-align:center;'>I love you so much ❤️😘</h3>",
+        "<h3 style='text-align:center; color:black;'>I love you so much ❤️😘</h3>",
         unsafe_allow_html=True
     )
