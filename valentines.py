@@ -72,7 +72,7 @@ st.markdown(
         margin-bottom: 20px;
     }
 
-    /* Full-screen popup overlay container */
+    /* Full-screen popup overlay */
     .popup-container {
         position: fixed;
         top: 0;
@@ -105,7 +105,7 @@ st.markdown(
 
     .popup-text {
         font-size: 16px;
-        margin-bottom: 20px;
+        margin-bottom: 0;
     }
 
     </style>
@@ -151,30 +151,32 @@ if no_clicked:
     st.session_state.show_gifs = False
 
 # -----------------------------
-# Error Popup (True Modal)
+# Error Popup (Click Outside to Close)
 # -----------------------------
 if st.session_state.show_error:
-    popup_container = st.container()  # container for the popup
+    popup_container = st.empty()  # placeholder container
 
-    with popup_container:
-        # Create full-screen overlay
+    with popup_container.container():
+        # HTML for popup + overlay with onclick
         st.markdown(
             """
-            <div class="popup-container">
-                <div class="popup-box">
+            <div class="popup-container" onclick="document.getElementById('close_error').click();">
+                <div class="popup-box" onclick="event.stopPropagation();">
                     <div class="popup-title">⚠️ SYSTEM ERROR</div>
                     <div class="popup-text">
                         ❌ ERROR: You cannot choose that option.<br>
-                        Please try again 💖
+                        Please try again 💖<br>
+                        (Click anywhere to try again)
                     </div>
+                    <button id="close_error" style="display:none;" onclick="">Close</button>
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        # Close button inside the container
-        if st.button("❌ Close Error"):
+        # Hidden Streamlit button listens for JS click
+        if st.button("close_error", key="hidden_close"):
             st.session_state.show_error = False
             st.rerun()
 
