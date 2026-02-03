@@ -72,7 +72,7 @@ st.markdown(
         margin-bottom: 20px;
     }
 
-    /* Full-screen popup overlay */
+    /* Full-screen popup overlay container */
     .popup-container {
         position: fixed;
         top: 0;
@@ -95,6 +95,7 @@ st.markdown(
         text-align: center;
         color: black;
         box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+        z-index: 10000;
     }
 
     .popup-title {
@@ -154,31 +155,32 @@ if no_clicked:
 # Error Popup (Click Outside to Close)
 # -----------------------------
 if st.session_state.show_error:
-    popup_container = st.empty()  # placeholder container
+    # placeholder container for popup
+    popup_placeholder = st.empty()
 
-    with popup_container.container():
-        # HTML for popup + overlay with onclick
+    with popup_placeholder.container():
+        # Full-screen button behind popup to close when clicked
+        if st.button("", key="overlay_button", help="Click outside the popup to close",
+                     args=None):
+            st.session_state.show_error = False
+            st.rerun()
+
+        # HTML for popup box (on top of the button)
         st.markdown(
             """
-            <div class="popup-container" onclick="document.getElementById('close_error').click();">
-                <div class="popup-box" onclick="event.stopPropagation();">
+            <div class="popup-container">
+                <div class="popup-box">
                     <div class="popup-title">⚠️ SYSTEM ERROR</div>
                     <div class="popup-text">
                         ❌ ERROR: You cannot choose that option.<br>
                         Please try again 💖<br>
                         (Click anywhere to try again)
                     </div>
-                    <button id="close_error" style="display:none;" onclick="">Close</button>
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
-
-        # Hidden Streamlit button listens for JS click
-        if st.button("close_error", key="hidden_close"):
-            st.session_state.show_error = False
-            st.rerun()
 
 # -----------------------------
 # Show GIFs if Yes
