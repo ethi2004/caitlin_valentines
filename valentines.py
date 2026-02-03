@@ -31,12 +31,9 @@ if "show_gifs" not in st.session_state:
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
-if "no_offset" not in st.session_state:
-    st.session_state.no_offset = 0
-
 
 # -----------------------------
-# Pink Background
+# Pink Background + Popup CSS
 # -----------------------------
 st.markdown(
     """
@@ -140,7 +137,6 @@ if yes_clicked:
 
 if no_clicked:
     st.session_state.show_error = True
-    st.session_state.no_offset = random.randint(0, 100)
     st.rerun()
 
 
@@ -149,23 +145,18 @@ if no_clicked:
 # -----------------------------
 if st.session_state.show_error:
 
-    st.markdown(
-        """
-        <div class="popup-overlay"></div>
+    popup_html = """
+    <div class="popup-overlay"></div>
+    <div class="popup-box">
+        <h2 style="color:red;">⚠️ SYSTEM ERROR</h2>
+        <p style="font-size:16px; margin-top:15px;">
+            ❌ ERROR: You cannot choose that option.<br><br>
+            Please try again 💖
+        </p>
+    </div>
+    """
 
-        <div class="popup-box">
-
-            <h2 style="color:red;">⚠️ SYSTEM ERROR</h2>
-
-            <p style="font-size:16px; margin-top:15px;">
-                ❌ ERROR: You cannot choose that option.<br><br>
-                Please try again 💖
-            </p>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown(popup_html, unsafe_allow_html=True)
 
     close_popup = st.button("❌ Close")
 
