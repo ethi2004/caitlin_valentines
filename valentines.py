@@ -9,7 +9,6 @@ Original file is located at
 
 import streamlit as st
 import os
-import time
 
 # -----------------------------
 # Page config
@@ -38,65 +37,17 @@ if "error_countdown" not in st.session_state:
 st.markdown(
     """
     <style>
-    .stApp {
-        background-color: #ffc0cb;
-        color: #fffdd0;
-    }
-    .title-text {
-        text-align: center;
-        font-size: 32px;
-        font-weight: bold;
-        color: #fffdd0;
-        margin-top: 30px;
-    }
-    .subtitle-text {
-        text-align: center;
-        font-size: 20px;
-        color: #fffdd0;
-        margin-bottom: 40px;
-    }
-    div.stButton > button {
-        font-size: 16px;
-        height: 50px;
-    }
-    .gif-caption {
-        text-align: center;
-        color: #fffdd0;
-        font-size: 20px;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-    .popup-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-    .popup-box {
-        background-color: white;
-        border-radius: 12px;
-        padding: 25px;
-        width: 350px;
-        text-align: center;
-        color: black;
-        box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
-        z-index: 10000;
-    }
-    .popup-title {
-        font-size: 22px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .popup-text {
-        font-size: 16px;
-        margin-bottom: 0;
-    }
+    .stApp { background-color: #ffc0cb; color: #fffdd0; }
+    .title-text { text-align: center; font-size: 32px; font-weight: bold; color: #fffdd0; margin-top: 30px; }
+    .subtitle-text { text-align: center; font-size: 20px; color: #fffdd0; margin-bottom: 40px; }
+    div.stButton > button { font-size: 16px; height: 50px; }
+    .gif-caption { text-align: center; color: #fffdd0; font-size: 20px; margin-top: 10px; margin-bottom: 20px; }
+    .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+                       display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    .popup-box { background-color: white; border-radius: 12px; padding: 25px; width: 350px; text-align: center; color: black;
+                 box-shadow: 0px 0px 20px rgba(0,0,0,0.3); z-index: 10000; }
+    .popup-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
+    .popup-text { font-size: 16px; margin-bottom: 0; }
     </style>
     """,
     unsafe_allow_html=True
@@ -139,7 +90,7 @@ if no_clicked:
     st.session_state.error_countdown = 5  # reset countdown
 
 # -----------------------------
-# Error Popup with Countdown
+# Error Popup with Countdown (no time.sleep)
 # -----------------------------
 if st.session_state.show_error:
     popup_placeholder = st.empty()
@@ -160,13 +111,12 @@ if st.session_state.show_error:
         unsafe_allow_html=True
     )
 
-    # Reduce countdown by 1 second on each rerun
+    # Countdown logic using reruns
     if st.session_state.error_countdown > 0:
-        time.sleep(1)  # wait 1 second
         st.session_state.error_countdown -= 1
-        st.experimental_rerun()
+        st.experimental_rerun()  # triggers next second
     else:
-        st.session_state.show_error = False
+        st.session_state.show_error = False  # hide popup
 
 # -----------------------------
 # Show GIFs if Yes
