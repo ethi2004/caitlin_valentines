@@ -72,27 +72,52 @@ st.markdown(
         margin-bottom: 20px;
     }
 
-    /* Error popup container */
-    .error-box {
-        background-color: white;
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        color: black;
-        width: 350px;
-        margin-left: auto;
-        margin-right: auto;
+    /* Full-screen popup overlay */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9998;
     }
 
-    .error-title {
+    /* Popup box */
+    .popup-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border-radius: 12px;
+        padding: 25px;
+        width: 350px;
+        text-align: center;
+        z-index: 9999;
+        color: black;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+    }
+
+    .popup-title {
         font-size: 22px;
         font-weight: bold;
         margin-bottom: 10px;
     }
 
-    .error-text {
+    .popup-text {
         font-size: 16px;
         margin-bottom: 15px;
+    }
+
+    .popup-button {
+        font-size: 16px;
+        padding: 8px 20px;
+        background-color: #ff4d88;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
     }
 
     </style>
@@ -141,12 +166,12 @@ if no_clicked:
 # Error Popup
 # -----------------------------
 if st.session_state.show_error:
-    # Popup container
     st.markdown(
         """
-        <div class="error-box">
-            <div class="error-title">⚠️ SYSTEM ERROR</div>
-            <div class="error-text">
+        <div class="popup-overlay"></div>
+        <div class="popup-box">
+            <div class="popup-title">⚠️ SYSTEM ERROR</div>
+            <div class="popup-text">
                 ❌ ERROR: You cannot choose that option.<br>
                 Please try again 💖
             </div>
@@ -155,7 +180,7 @@ if st.session_state.show_error:
         unsafe_allow_html=True
     )
     # Close button inside Streamlit
-    if st.button("❌ Close"):
+    if st.button("❌ Close Error"):
         st.session_state.show_error = False
         st.rerun()
 
@@ -173,10 +198,8 @@ if st.session_state.show_gifs:
     gif2_path = os.path.join("Gifs", "Us_2.gif")
 
     colA, colB = st.columns(2)
-
     with colA:
         st.image(gif1_path, use_container_width=True)
-
     with colB:
         st.image(gif2_path, use_container_width=True)
 
