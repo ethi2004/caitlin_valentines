@@ -27,6 +27,43 @@ st.markdown(
     .stApp {
         background-color: pink;
     }
+
+    /* Popup background */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9998;
+    }
+
+    /* Popup box */
+    .popup-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        width: 350px;
+        text-align: center;
+        z-index: 9999;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+    }
+
+    .popup-title {
+        font-size: 22px;
+        color: red;
+        font-weight: bold;
+    }
+
+    .popup-text {
+        margin-top: 15px;
+        font-size: 16px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -54,8 +91,6 @@ if "show_gifs" not in st.session_state:
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
-if "no_offset" not in st.session_state:
-    st.session_state.no_offset = random.randint(0, 40)
 
 
 # -------------------------------
@@ -75,6 +110,7 @@ with middle:
         no_clicked = st.button("No 🙄", use_container_width=True)
 
 
+
 # -------------------------------
 # Button Logic
 # -------------------------------
@@ -86,26 +122,43 @@ if yes_clicked:
 
 if no_clicked:
     st.session_state.show_error = True
-    st.session_state.no_offset = random.randint(0, 40)
     st.rerun()
 
 
+
 # -------------------------------
-# Fake Error Popup (Modal)
+# Fake Popup (HTML Overlay)
 # -------------------------------
 
 if st.session_state.show_error:
 
-    with st.modal("⚠️ System Error"):
+    st.markdown(
+        """
+        <div class="popup-overlay"></div>
 
-        st.error("❌ ERROR: You cannot choose that option.")
+        <div class="popup-box">
+            <div class="popup-title">⚠️ SYSTEM ERROR</div>
 
-        st.write("")
-        st.write("Please try again 😘💖")
+            <div class="popup-text">
+                ❌ ERROR: You cannot choose that option.<br><br>
+                Please try again 💖
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        if st.button("❎ Close"):
+    st.write("")
+    st.write("")
+    st.write("")
+
+    close_col = st.columns([1, 1, 1])[1]
+
+    with close_col:
+        if st.button("❌ Close Error"):
             st.session_state.show_error = False
             st.rerun()
+
 
 
 # -------------------------------
