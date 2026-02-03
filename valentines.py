@@ -11,14 +11,12 @@ import streamlit as st
 import random
 import os
 
-
 # Page config
 st.set_page_config(
     page_title="For Caitlin 💌",
     page_icon="💖",
     layout="centered"
 )
-
 
 # Pink background
 st.markdown(
@@ -27,11 +25,15 @@ st.markdown(
     .stApp {
         background-color: pink;
     }
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 
 # Title
 st.markdown(
@@ -39,53 +41,61 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 st.write("")
 st.write("")
-
 
 # Session state
 if "show_gifs" not in st.session_state:
     st.session_state.show_gifs = False
 
-if "no_pos" not in st.session_state:
-    st.session_state.no_pos = random.randint(0, 120)
+if "no_margin" not in st.session_state:
+    st.session_state.no_margin = random.randint(0, 50)
 
+# Center buttons horizontally
+st.markdown("<div class='center'>", unsafe_allow_html=True)
 
-# YES button
-col1, col2, col3 = st.columns([1, 1, 1])
+# "Yes" button
+yes_clicked = st.button("Yes 💖")
+if yes_clicked:
+    st.session_state.show_gifs = True
 
-with col1:
-    if st.button("Yes 💖"):
-        st.session_state.show_gifs = True
+# Add horizontal spacing
+st.markdown("&nbsp;&nbsp;&nbsp;&nbsp;", unsafe_allow_html=True)
 
+# "No" button with top margin (moves)
+no_clicked = st.button("No 🙄")
+if no_clicked:
+    st.session_state.no_margin = random.randint(0, 50)
+    st.rerun()
 
-# NO button (moves)
-with col3:
+st.markdown("</div>", unsafe_allow_html=True)
 
-    space = st.empty()
-
-    if space.button("No 🙄"):
-        st.session_state.no_pos = random.randint(0, 120)
-        st.rerun()
-
-
-# Fake spacing to move button
+# Move "No" button visually by top margin
 st.markdown(
-    f"<div style='height:{st.session_state.no_pos}px'></div>",
+    f"<div style='margin-top:{st.session_state.no_margin}px'></div>",
     unsafe_allow_html=True
 )
 
-
 # Show GIFs after YES
 if st.session_state.show_gifs:
-
     st.balloons()
-
     st.success("I knew you'd say yes 😘💖 I love you so much ❤️")
 
     st.write("")
 
     colA, colB = st.columns(2)
 
-    gif1_path = os_
+    # Use the correct folder and filenames
+    gif1_path = os.path.join("Gifs", "Us_1.gif")
+    gif2_path = os.path.join("Gifs", "Us_2.gif")
+
+    with colA:
+        st.image(gif1_path, use_container_width=True)
+
+    with colB:
+        st.image(gif2_path, use_container_width=True)
+
+    st.markdown(
+        "<h3 style='text-align:center;color:#cc0066;'>Forever Us 💞</h3>",
+        unsafe_allow_html=True
+    )
