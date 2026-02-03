@@ -12,23 +12,59 @@ import random
 import os
 
 
-# Page config
+# -----------------------------
+# Page Config
+# -----------------------------
 st.set_page_config(
-    page_title="For Caitlin 💌",
-    page_icon="💖",
+    page_title="For Caitlin 💖",
+    page_icon="💌",
     layout="centered"
 )
 
 
-# Pink background
+# -----------------------------
+# Session State
+# -----------------------------
+if "show_gifs" not in st.session_state:
+    st.session_state.show_gifs = False
+
+if "show_error" not in st.session_state:
+    st.session_state.show_error = False
+
+if "no_offset" not in st.session_state:
+    st.session_state.no_offset = 0
+
+
+# -----------------------------
+# Pink Background
+# -----------------------------
 st.markdown(
     """
     <style>
-    .stApp {
-        background-color: pink;
+
+    body {
+        background-color: #ffc0cb;
     }
 
-    /* Popup background */
+    .main {
+        background-color: #ffc0cb;
+    }
+
+    .title-text {
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #cc0066;
+        margin-top: 30px;
+    }
+
+    .subtitle-text {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 40px;
+    }
+
+    /* Popup Overlay */
     .popup-overlay {
         position: fixed;
         top: 0;
@@ -39,7 +75,7 @@ st.markdown(
         z-index: 9998;
     }
 
-    /* Popup box */
+    /* Popup Box */
     .popup-box {
         position: fixed;
         top: 50%;
@@ -47,56 +83,40 @@ st.markdown(
         transform: translate(-50%, -50%);
         background: white;
         padding: 30px;
-        border-radius: 15px;
-        width: 350px;
+        border-radius: 12px;
         text-align: center;
+        width: 320px;
         z-index: 9999;
         box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
     }
 
-    .popup-title {
-        font-size: 22px;
-        color: red;
-        font-weight: bold;
-    }
-
-    .popup-text {
-        margin-top: 15px;
-        font-size: 16px;
-    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
 
-# Title
+# -----------------------------
+# Main Text
+# -----------------------------
 st.markdown(
-    "<h1 style='text-align: center; color: #cc0066;'>Hiiiii baby 💕<br>Will you be my Valentine?</h1>",
+    """
+    <div class="title-text">
+        Hiiiii baby 💕<br><br>
+        Will you be my Valentine?
+    </div>
+
+    <div class="subtitle-text">
+        💖💌💖
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
 
-st.write("")
-st.write("")
-
-
-# -------------------------------
-# Session State
-# -------------------------------
-
-if "show_gifs" not in st.session_state:
-    st.session_state.show_gifs = False
-
-if "show_error" not in st.session_state:
-    st.session_state.show_error = False
-
-
-
-# -------------------------------
+# -----------------------------
 # Centered Buttons
-# -------------------------------
-
+# -----------------------------
 left, middle, right = st.columns([1, 2, 1])
 
 with middle:
@@ -110,11 +130,9 @@ with middle:
         no_clicked = st.button("No 🙄", use_container_width=True)
 
 
-
-# -------------------------------
+# -----------------------------
 # Button Logic
-# -------------------------------
-
+# -----------------------------
 if yes_clicked:
     st.session_state.show_gifs = True
     st.session_state.show_error = False
@@ -122,14 +140,13 @@ if yes_clicked:
 
 if no_clicked:
     st.session_state.show_error = True
+    st.session_state.no_offset = random.randint(0, 100)
     st.rerun()
 
 
-
-# -------------------------------
-# Fake Popup (HTML Overlay)
-# -------------------------------
-
+# -----------------------------
+# Error Popup
+# -----------------------------
 if st.session_state.show_error:
 
     st.markdown(
@@ -137,55 +154,50 @@ if st.session_state.show_error:
         <div class="popup-overlay"></div>
 
         <div class="popup-box">
-            <div class="popup-title">⚠️ SYSTEM ERROR</div>
 
-            <div class="popup-text">
+            <h2 style="color:red;">⚠️ SYSTEM ERROR</h2>
+
+            <p style="font-size:16px; margin-top:15px;">
                 ❌ ERROR: You cannot choose that option.<br><br>
                 Please try again 💖
-            </div>
+            </p>
+
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.write("")
-    st.write("")
-    st.write("")
+    close_popup = st.button("❌ Close")
 
-    close_col = st.columns([1, 1, 1])[1]
-
-    with close_col:
-        if st.button("❌ Close Error"):
-            st.session_state.show_error = False
-            st.rerun()
+    if close_popup:
+        st.session_state.show_error = False
+        st.rerun()
 
 
-
-# -------------------------------
-# Show GIFs After YES
-# -------------------------------
-
+# -----------------------------
+# Show GIFs When Yes
+# -----------------------------
 if st.session_state.show_gifs:
 
-    st.balloons()
+    st.markdown("---")
 
-    st.success("I knew you'd say yes 😘💖 I love you so much ❤️")
-
-    st.write("")
-
-    colA, colB = st.columns(2)
+    st.markdown(
+        "<h2 style='text-align:center; color:#cc0066;'>Us 💖</h2>",
+        unsafe_allow_html=True
+    )
 
     gif1_path = os.path.join("Gifs", "Us_1.gif")
     gif2_path = os.path.join("Gifs", "Us_2.gif")
 
-    with colA:
+    col1, col2 = st.columns(2)
+
+    with col1:
         st.image(gif1_path, use_container_width=True)
 
-    with colB:
+    with col2:
         st.image(gif2_path, use_container_width=True)
 
-
     st.markdown(
-        "<h3 style='text-align:center;color:#cc0066;'>Forever Us 💞</h3>",
+        "<h3 style='text-align:center;'>I love you so much ❤️😘</h3>",
         unsafe_allow_html=True
     )
