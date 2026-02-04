@@ -7,6 +7,9 @@ Original file is located at
     https://colab.research.google.com/drive/1wUYaJATdlFzneSsaIqzVHGtsQHz7raV1
 """
 
+# -*- coding: utf-8 -*-
+"""Valentines.py"""
+
 import streamlit as st
 import os
 
@@ -37,7 +40,7 @@ st.markdown(
     /* Pink background */
     .stApp {
         background-color: #ffc0cb;
-        color: #fffdd0; /* default cream text */
+        color: #fffdd0;
     }
 
     /* Main title */
@@ -82,6 +85,7 @@ st.markdown(
         width: 350px;
         margin-left: auto;
         margin-right: auto;
+        margin-top: 20px;
     }
 
     .error-title {
@@ -118,9 +122,9 @@ st.markdown(
 )
 
 # -----------------------------
-# Centered Buttons
+# Centered Yes / No Buttons
 # -----------------------------
-col1, col2, col3 = st.columns([1,2,1])
+col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
     yes_clicked = st.button("Yes 💖", use_container_width=True)
@@ -141,7 +145,8 @@ if no_clicked:
 # Error Popup
 # -----------------------------
 if st.session_state.show_error:
-    # Popup container
+
+    # Popup
     st.markdown(
         """
         <div class="error-box">
@@ -154,16 +159,22 @@ if st.session_state.show_error:
         """,
         unsafe_allow_html=True
     )
-    # Close button inside Streamlit
-    if st.button("❌ Close"):
-        st.session_state.show_error = False
-        st.rerun()
+
+    # Centered Close Button
+    c1, c2, c3 = st.columns([1, 2, 1])
+
+    with c2:
+        if st.button("❌ Close", use_container_width=True):
+            st.session_state.show_error = False
+            st.rerun()
 
 # -----------------------------
 # Show GIFs if Yes
 # -----------------------------
 if st.session_state.show_gifs:
+
     st.markdown("---")
+
     st.markdown(
         "<div class='gif-caption'>Us 💖</div>",
         unsafe_allow_html=True
