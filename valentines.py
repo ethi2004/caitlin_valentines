@@ -13,98 +13,109 @@ import time
 # -----------------------------
 # Page Config
 # -----------------------------
-st.set_page_config(page_title="Valentine 💖", layout="centered")
-
+st.set_page_config(
+    page_title="Valentine 💖",
+    layout="centered"
+)
 
 # -----------------------------
-# Session State Setup
+# Session State
 # -----------------------------
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
 if "error_start_time" not in st.session_state:
-    st.session_state.error_start_time = None
+    st.session_state.error_start_time = 0
 
 
 # -----------------------------
-# Styling
+# Global CSS
 # -----------------------------
-st.markdown("""
+st.markdown(
+    """
 <style>
 
+/* Background */
 body {
-    background-color: #ffb6c1;
+    background-color: #ffb6c1 !important;
 }
 
 .main {
-    background-color: #ffb6c1;
+    background-color: #ffb6c1 !important;
 }
 
-/* Center buttons */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    margin-top: 40px;
-}
-
-/* Error overlay */
-.error-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-/* Error box */
-.error-box {
-    background-color: #ffc0cb;
-    padding: 35px 45px;
-    border-radius: 20px;
-    text-align: center;
-    width: 320px;
-}
-
-/* Cream text */
-.cream-text {
+/* Headings */
+h1 {
     color: #fff3d6;
 }
 
-/* Black error text */
-.black-text {
+/* Button container */
+div.stButton > button {
+    width: 100%;
+    height: 55px;
+    font-size: 20px;
+}
+
+/* Overlay */
+#error-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+/* Popup box */
+#error-box {
+    background: #ffc0cb;
+    padding: 35px 40px;
+    border-radius: 22px;
+    width: 340px;
+    text-align: center;
+}
+
+/* Cream text */
+.cream {
+    color: #fff3d6;
+}
+
+/* Black error */
+.black {
     color: black;
     font-weight: bold;
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True
+)
 
 
 # -----------------------------
-# Main Content
+# Title
 # -----------------------------
-st.markdown("<h1 class='cream-text' style='text-align:center;'>💖 Will You Be My Valentine? 💖</h1>",
-            unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='text-align:center;'>💖 Will You Be My Valentine? 💖</h1>",
+    unsafe_allow_html=True
+)
 
 
+# -----------------------------
 # Buttons
+# -----------------------------
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    yes = st.button("💘 YES 💘", use_container_width=True)
+    yes = st.button("💘 YES 💘")
 
 with col2:
-    no = st.button("💔 NO 💔", use_container_width=True)
+    no = st.button("💔 NO 💔")
 
 
 # -----------------------------
-# Button Logic
+# Button Actions
 # -----------------------------
 if yes:
     st.balloons()
@@ -117,7 +128,7 @@ if no:
 
 
 # -----------------------------
-# Error Popup + Timer
+# Error Popup
 # -----------------------------
 if st.session_state.show_error:
 
@@ -128,29 +139,30 @@ if st.session_state.show_error:
         st.session_state.show_error = False
         st.rerun()
 
-    st.markdown(f"""
-    <div class="error-overlay">
-        <div class="error-box">
+    popup_html = f"""
+    <div id="error-overlay">
+        <div id="error-box">
 
             <h2>⚠️ SYSTEM ERROR</h2>
 
-            <p class="black-text">
+            <p class="black">
                 ❌ ERROR: You cannot choose that option.
             </p>
 
-            <p class="cream-text">
+            <p class="cream">
                 Please try again 💖<br><br>
                 (Click anywhere to try again)
             </p>
 
-            <p class="cream-text">
+            <p class="cream">
                 Closing in {remaining}...
             </p>
 
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
 
-    # Refresh every second
+    st.markdown(popup_html, unsafe_allow_html=True)
+
     time.sleep(1)
     st.rerun()
