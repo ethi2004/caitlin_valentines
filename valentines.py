@@ -7,9 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1wUYaJATdlFzneSsaIqzVHGtsQHz7raV1
 """
 
-# -*- coding: utf-8 -*-
-"""Valentines.py"""
-
 import streamlit as st
 import os
 
@@ -128,7 +125,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
     yes_clicked = st.button("Yes 💖", use_container_width=True)
-    no_clicked = st.button("No 🙄", use_container_width=True)
+    no_clicked = st.button("No 🙄 (select this first hehe)", use_container_width=True)
 
 # -----------------------------
 # Button Logic
@@ -176,7 +173,7 @@ if st.session_state.show_gifs:
     st.markdown("---")
 
     st.markdown(
-        "<div class='gif-caption'>Us 💖</div>",
+        "<div class='gif-caption'>Me after you said yes :)</div>",
         unsafe_allow_html=True
     )
 
@@ -192,6 +189,6 @@ if st.session_state.show_gifs:
         st.image(gif2_path, use_container_width=True)
 
     st.markdown(
-        "<div class='gif-caption'>I love you so much ❤️😘</div>",
+        "<div class='gif-caption'>YAY YOU ARE MY VALENTINE ❤️</div>",
         unsafe_allow_html=True
     )
