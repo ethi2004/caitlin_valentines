@@ -9,6 +9,7 @@ Original file is located at
 
 import streamlit as st
 import os
+import time
 
 # -----------------------------
 # Page config
@@ -28,8 +29,10 @@ if "show_gifs" not in st.session_state:
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
-if "error_countdown" not in st.session_state:
-    st.session_state.error_countdown = 5  # countdown in seconds
+if "error_start_time" not in st.session_state:
+    st.session_state.error_start_time = None  # timestamp for countdown
+
+ERROR_DURATION = 5  # countdown in seconds
 
 # -----------------------------
 # CSS Styling
@@ -83,40 +86,43 @@ with col2:
 if yes_clicked:
     st.session_state.show_gifs = True
     st.session_state.show_error = False
+    st.session_state.error_start_time = None
 
 if no_clicked:
     st.session_state.show_error = True
     st.session_state.show_gifs = False
-    st.session_state.error_countdown = 5  # reset countdown
+    st.session_state.error_start_time = time.time()  # start countdown
 
 # -----------------------------
-# Error Popup with Countdown (no time.sleep)
+# Error Popup with Timestamp Countdown
 # -----------------------------
-if st.session_state.show_error:
-    popup_placeholder = st.empty()
+if st.session_state.show_error and st.session_state.error_start_time:
+    elapsed = int(time.time() - st.session_state.error_start_time)
+    remaining = ERROR_DURATION - elapsed
 
-    popup_placeholder.markdown(
-        f"""
-        <div class="popup-container">
-            <div class="popup-box">
-                <div class="popup-title">⚠️ SYSTEM ERROR</div>
-                <div class="popup-text">
-                    ❌ ERROR: You cannot choose that option.<br>
-                    Please try again 💖<br>
-                    (Closing in {st.session_state.error_countdown} seconds)
+    if remaining > 0:
+        popup_placeholder = st.empty()
+        popup_placeholder.markdown(
+            f"""
+            <div class="popup-container">
+                <div class="popup-box">
+                    <div class="popup-title">⚠️ SYSTEM ERROR</div>
+                    <div class="popup-text">
+                        ❌ ERROR: You cannot choose that option.<br>
+                        Please try again 💖<br>
+                        (Closing in {remaining} seconds)
+                    </div>
                 </div>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Countdown logic using reruns
-    if st.session_state.error_countdown > 0:
-        st.session_state.error_countdown -= 1
-        st.experimental_rerun()  # triggers next second
+            """,
+            unsafe_allow_html=True
+        )
+        # trigger a rerun after 1 second automatically
+        st.experimental_rerun()
     else:
-        st.session_state.show_error = False  # hide popup
+        # countdown finished
+        st.session_state.show_error = False
+        st.session_state.error_start_time = None
 
 # -----------------------------
 # Show GIFs if Yes
