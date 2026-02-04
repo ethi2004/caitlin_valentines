@@ -8,27 +8,17 @@ Original file is located at
 """
 
 import streamlit as st
-import os
 import time
-from streamlit_autorefresh import st_autorefresh
+
+# -----------------------------
+# Page Config
+# -----------------------------
+st.set_page_config(page_title="Valentine 💖", layout="centered")
 
 
 # -----------------------------
-# Page config
+# Session State Setup
 # -----------------------------
-st.set_page_config(
-    page_title="For Caitlin 💖",
-    page_icon="💌",
-    layout="centered"
-)
-
-
-# -----------------------------
-# Session State
-# -----------------------------
-if "show_gifs" not in st.session_state:
-    st.session_state.show_gifs = False
-
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
@@ -36,202 +26,131 @@ if "error_start_time" not in st.session_state:
     st.session_state.error_start_time = None
 
 
-ERROR_DURATION = 5  # seconds
+# -----------------------------
+# Styling
+# -----------------------------
+st.markdown("""
+<style>
+
+body {
+    background-color: #ffb6c1;
+}
+
+.main {
+    background-color: #ffb6c1;
+}
+
+/* Center buttons */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 40px;
+}
+
+/* Error overlay */
+.error-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Error box */
+.error-box {
+    background-color: #ffc0cb;
+    padding: 35px 45px;
+    border-radius: 20px;
+    text-align: center;
+    width: 320px;
+}
+
+/* Cream text */
+.cream-text {
+    color: #fff3d6;
+}
+
+/* Black error text */
+.black-text {
+    color: black;
+    font-weight: bold;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # -----------------------------
-# Auto refresh every second
+# Main Content
 # -----------------------------
-st_autorefresh(interval=1000, key="refresh")
+st.markdown("<h1 class='cream-text' style='text-align:center;'>💖 Will You Be My Valentine? 💖</h1>",
+            unsafe_allow_html=True)
 
 
-# -----------------------------
-# CSS Styling
-# -----------------------------
-st.markdown(
-    """
-    <style>
-
-    .stApp {
-        background-color: #ffc0cb;
-        color: #fffdd0;
-    }
-
-    .title-text {
-        text-align: center;
-        font-size: 32px;
-        font-weight: bold;
-        color: #fffdd0;
-        margin-top: 30px;
-    }
-
-    .subtitle-text {
-        text-align: center;
-        font-size: 20px;
-        color: #fffdd0;
-        margin-bottom: 40px;
-    }
-
-    div.stButton > button {
-        font-size: 18px;
-        height: 55px;
-        border-radius: 10px;
-    }
-
-    .gif-caption {
-        text-align: center;
-        color: #fffdd0;
-        font-size: 20px;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-
-    /* Popup overlay */
-    .popup-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    /* Popup box */
-    .popup-box {
-        background-color: white;
-        border-radius: 15px;
-        padding: 30px;
-        width: 360px;
-        text-align: center;
-        color: black;
-        box-shadow: 0px 0px 25px rgba(0,0,0,0.4);
-    }
-
-    .popup-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    .popup-text {
-        font-size: 17px;
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# -----------------------------
-# Title
-# -----------------------------
-st.markdown(
-    """
-    <div class="title-text">
-        Hiiiii baby 💕<br><br>
-        Will you be my Valentine?
-    </div>
-
-    <div class="subtitle-text">
-        💖💌💖
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# -----------------------------
 # Buttons
-# -----------------------------
-col1, col2, col3 = st.columns([1,2,1])
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    yes = st.button("💘 YES 💘", use_container_width=True)
 
 with col2:
-    yes = st.button("Yes 💖", use_container_width=True)
-    no = st.button("No 🙄", use_container_width=True)
+    no = st.button("💔 NO 💔", use_container_width=True)
 
 
 # -----------------------------
 # Button Logic
 # -----------------------------
 if yes:
-    st.session_state.show_gifs = True
-    st.session_state.show_error = False
-    st.session_state.error_start_time = None
-
+    st.balloons()
+    st.success("YAY!! 💕 I knew you'd say yes 😘")
 
 if no:
     st.session_state.show_error = True
-    st.session_state.show_gifs = False
     st.session_state.error_start_time = time.time()
+    st.rerun()
 
 
 # -----------------------------
-# Error Popup (Countdown)
+# Error Popup + Timer
 # -----------------------------
-if st.session_state.show_error and st.session_state.error_start_time:
+if st.session_state.show_error:
 
-    elapsed = int(time.time() - st.session_state.error_start_time)
-    remaining = ERROR_DURATION - elapsed
+    elapsed = time.time() - st.session_state.error_start_time
+    remaining = max(0, 5 - int(elapsed))
 
-
-    if remaining > 0:
-
-        st.markdown(
-            f"""
-            <div class="popup-container">
-                <div class="popup-box">
-
-                    <div class="popup-title">
-                        ⚠️ SYSTEM ERROR
-                    </div>
-
-                    <div class="popup-text">
-                        ❌ ERROR: You cannot choose that option.<br><br>
-                        Please try again 💖<br><br>
-                        (Closing in {remaining} seconds)
-                    </div>
-
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    else:
-        # Hide popup
+    if remaining == 0:
         st.session_state.show_error = False
-        st.session_state.error_start_time = None
+        st.rerun()
 
+    st.markdown(f"""
+    <div class="error-overlay">
+        <div class="error-box">
 
-# -----------------------------
-# Show GIFs
-# -----------------------------
-if st.session_state.show_gifs:
+            <h2>⚠️ SYSTEM ERROR</h2>
 
-    st.markdown("---")
+            <p class="black-text">
+                ❌ ERROR: You cannot choose that option.
+            </p>
 
-    st.markdown(
-        "<div class='gif-caption'>Us 💖</div>",
-        unsafe_allow_html=True
-    )
+            <p class="cream-text">
+                Please try again 💖<br><br>
+                (Click anywhere to try again)
+            </p>
 
-    gif1 = os.path.join("Gifs", "Us_1.gif")
-    gif2 = os.path.join("Gifs", "Us_2.gif")
+            <p class="cream-text">
+                Closing in {remaining}...
+            </p>
 
-    colA, colB = st.columns(2)
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with colA:
-        st.image(gif1, use_container_width=True)
-
-    with colB:
-        st.image(gif2, use_container_width=True)
-
-    st.markdown(
-        "<div class='gif-caption'>I love you so much ❤️😘</div>",
-        unsafe_allow_html=True
-    )
+    # Refresh every second
+    time.sleep(1)
+    st.rerun()
