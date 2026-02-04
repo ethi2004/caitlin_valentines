@@ -8,173 +8,179 @@ Original file is located at
 """
 
 import streamlit as st
-import time
+import os
 
 # -----------------------------
-# Force Page Theme
+# Page config
 # -----------------------------
 st.set_page_config(
-    page_title="Valentine 💖",
-    layout="centered",
-    initial_sidebar_state="collapsed"
+    page_title="For Caitlin 💖",
+    page_icon="💌",
+    layout="centered"
 )
 
 # -----------------------------
 # Session State
 # -----------------------------
+if "show_gifs" not in st.session_state:
+    st.session_state.show_gifs = False
+
 if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
-if "error_start" not in st.session_state:
-    st.session_state.error_start = 0
-
-
 # -----------------------------
-# FORCE GLOBAL CSS (HARD OVERRIDE)
+# CSS Styling
 # -----------------------------
 st.markdown(
     """
-<style>
+    <style>
+    /* Pink background */
+    .stApp {
+        background-color: #ffc0cb;
+        color: #fffdd0; /* default cream text */
+    }
 
-/* Kill Streamlit theme */
-html, body, [class*="css"] {
-    background-color: #ffb6c1 !important;
-}
+    /* Main title */
+    .title-text {
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #fffdd0;
+        margin-top: 30px;
+    }
 
-/* Main container */
-section.main {
-    background-color: #ffb6c1 !important;
-}
+    /* Subtitle */
+    .subtitle-text {
+        text-align: center;
+        font-size: 20px;
+        color: #fffdd0;
+        margin-bottom: 40px;
+    }
 
-/* App view */
-div[data-testid="stAppViewContainer"] {
-    background-color: #ffb6c1 !important;
-}
+    /* Buttons */
+    div.stButton > button {
+        font-size: 16px;
+        height: 50px;
+    }
 
-/* Main block */
-div[data-testid="stApp"] {
-    background-color: #ffb6c1 !important;
-}
+    /* GIF captions */
+    .gif-caption {
+        text-align: center;
+        color: #fffdd0;
+        font-size: 20px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
 
-/* Text */
-h1, h2, h3, p, span {
-    color: #fff3d6 !important;
-}
+    /* Error popup container */
+    .error-box {
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        color: black;
+        width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-/* Buttons */
-div.stButton > button {
-    width: 100%;
-    height: 55px;
-    font-size: 20px;
-    border-radius: 12px;
-}
+    .error-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 
-/* Overlay */
-#error-bg {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999999;
-}
+    .error-text {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
 
-/* Popup */
-#error-box {
-    background: white;
-    padding: 35px;
-    border-radius: 20px;
-    width: 350px;
-    text-align: center;
-}
-
-/* Popup text */
-.error-black {
-    color: black !important;
-    font-weight: bold;
-}
-
-.error-normal {
-    color: black !important;
-}
-
-</style>
-""",
+    </style>
+    """,
     unsafe_allow_html=True
 )
 
-
 # -----------------------------
-# Title
+# Main Title
 # -----------------------------
 st.markdown(
-    "<h1 style='text-align:center;'>💖 Will You Be My Valentine? 💖</h1>",
+    """
+    <div class="title-text">
+        Hiiiii baby 💕<br><br>
+        Will you be my Valentine?
+    </div>
+
+    <div class="subtitle-text">
+        💖💌💖
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
-
 # -----------------------------
-# Buttons
+# Centered Buttons
 # -----------------------------
-left, right = st.columns([1, 1])
+col1, col2, col3 = st.columns([1,2,1])
 
-with left:
-    yes = st.button("💘 YES 💘")
-
-with right:
-    no = st.button("💔 NO 💔")
-
+with col2:
+    yes_clicked = st.button("Yes 💖", use_container_width=True)
+    no_clicked = st.button("No 🙄", use_container_width=True)
 
 # -----------------------------
 # Button Logic
 # -----------------------------
-if yes:
-    st.balloons()
-    st.success("YAY!! 💕 I knew you'd say yes 😘")
+if yes_clicked:
+    st.session_state.show_gifs = True
+    st.session_state.show_error = False
 
-if no:
+if no_clicked:
     st.session_state.show_error = True
-    st.session_state.error_start = time.time()
-    st.rerun()
-
+    st.session_state.show_gifs = False
 
 # -----------------------------
-# Popup
+# Error Popup
 # -----------------------------
 if st.session_state.show_error:
-
-    elapsed = time.time() - st.session_state.error_start
-    remaining = max(0, 5 - int(elapsed))
-
-    if remaining == 0:
+    # Popup container
+    st.markdown(
+        """
+        <div class="error-box">
+            <div class="error-title">⚠️ SYSTEM ERROR</div>
+            <div class="error-text">
+                ❌ ERROR: You cannot choose that option.<br>
+                Please try again 💖
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    # Close button inside Streamlit
+    if st.button("❌ Close"):
         st.session_state.show_error = False
         st.rerun()
 
-    popup = f"""
-    <div id="error-bg">
-        <div id="error-box">
+# -----------------------------
+# Show GIFs if Yes
+# -----------------------------
+if st.session_state.show_gifs:
+    st.markdown("---")
+    st.markdown(
+        "<div class='gif-caption'>Us 💖</div>",
+        unsafe_allow_html=True
+    )
 
-            <h2 class="error-black">⚠️ SYSTEM ERROR</h2>
+    gif1_path = os.path.join("Gifs", "Us_1.gif")
+    gif2_path = os.path.join("Gifs", "Us_2.gif")
 
-            <p class="error-black">
-                ❌ ERROR: You cannot choose that option.
-            </p>
+    colA, colB = st.columns(2)
 
-            <p class="error-normal">
-                Please try again 💖<br><br>
-                (Click anywhere to try again)
-            </p>
+    with colA:
+        st.image(gif1_path, use_container_width=True)
 
-            <p class="error-normal">
-                Closing in {remaining}...
-            </p>
+    with colB:
+        st.image(gif2_path, use_container_width=True)
 
-        </div>
-    </div>
-    """
-
-    st.markdown(popup, unsafe_allow_html=True)
-
-    time.sleep(1)
-    st.rerun()
+    st.markdown(
+        "<div class='gif-caption'>I love you so much ❤️😘</div>",
+        unsafe_allow_html=True
+    )
