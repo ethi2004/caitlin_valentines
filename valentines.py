@@ -10,6 +10,8 @@ Original file is located at
 import streamlit as st
 import os
 import time
+from streamlit_autorefresh import st_autorefresh
+
 
 # -----------------------------
 # Page config
@@ -19,6 +21,7 @@ st.set_page_config(
     page_icon="💌",
     layout="centered"
 )
+
 
 # -----------------------------
 # Session State
@@ -30,9 +33,17 @@ if "show_error" not in st.session_state:
     st.session_state.show_error = False
 
 if "error_start_time" not in st.session_state:
-    st.session_state.error_start_time = None  # timestamp for countdown
+    st.session_state.error_start_time = None
 
-ERROR_DURATION = 5  # countdown in seconds
+
+ERROR_DURATION = 5  # seconds
+
+
+# -----------------------------
+# Auto refresh every second
+# -----------------------------
+st_autorefresh(interval=1000, key="refresh")
+
 
 # -----------------------------
 # CSS Styling
@@ -40,24 +51,84 @@ ERROR_DURATION = 5  # countdown in seconds
 st.markdown(
     """
     <style>
-    .stApp { background-color: #ffc0cb; color: #fffdd0; }
-    .title-text { text-align: center; font-size: 32px; font-weight: bold; color: #fffdd0; margin-top: 30px; }
-    .subtitle-text { text-align: center; font-size: 20px; color: #fffdd0; margin-bottom: 40px; }
-    div.stButton > button { font-size: 16px; height: 50px; }
-    .gif-caption { text-align: center; color: #fffdd0; font-size: 20px; margin-top: 10px; margin-bottom: 20px; }
-    .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
-                       display: flex; justify-content: center; align-items: center; z-index: 9999; }
-    .popup-box { background-color: white; border-radius: 12px; padding: 25px; width: 350px; text-align: center; color: black;
-                 box-shadow: 0px 0px 20px rgba(0,0,0,0.3); z-index: 10000; }
-    .popup-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
-    .popup-text { font-size: 16px; margin-bottom: 0; }
+
+    .stApp {
+        background-color: #ffc0cb;
+        color: #fffdd0;
+    }
+
+    .title-text {
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #fffdd0;
+        margin-top: 30px;
+    }
+
+    .subtitle-text {
+        text-align: center;
+        font-size: 20px;
+        color: #fffdd0;
+        margin-bottom: 40px;
+    }
+
+    div.stButton > button {
+        font-size: 18px;
+        height: 55px;
+        border-radius: 10px;
+    }
+
+    .gif-caption {
+        text-align: center;
+        color: #fffdd0;
+        font-size: 20px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Popup overlay */
+    .popup-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    /* Popup box */
+    .popup-box {
+        background-color: white;
+        border-radius: 15px;
+        padding: 30px;
+        width: 360px;
+        text-align: center;
+        color: black;
+        box-shadow: 0px 0px 25px rgba(0,0,0,0.4);
+    }
+
+    .popup-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .popup-text {
+        font-size: 17px;
+    }
+
     </style>
     """,
     unsafe_allow_html=True
 )
 
+
 # -----------------------------
-# Main Title
+# Title
 # -----------------------------
 st.markdown(
     """
@@ -65,6 +136,7 @@ st.markdown(
         Hiiiii baby 💕<br><br>
         Will you be my Valentine?
     </div>
+
     <div class="subtitle-text">
         💖💌💖
     </div>
@@ -72,76 +144,92 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
 # -----------------------------
-# Centered Buttons
+# Buttons
 # -----------------------------
 col1, col2, col3 = st.columns([1,2,1])
+
 with col2:
-    yes_clicked = st.button("Yes 💖", use_container_width=True)
-    no_clicked = st.button("No 🙄", use_container_width=True)
+    yes = st.button("Yes 💖", use_container_width=True)
+    no = st.button("No 🙄", use_container_width=True)
+
 
 # -----------------------------
 # Button Logic
 # -----------------------------
-if yes_clicked:
+if yes:
     st.session_state.show_gifs = True
     st.session_state.show_error = False
     st.session_state.error_start_time = None
 
-if no_clicked:
+
+if no:
     st.session_state.show_error = True
     st.session_state.show_gifs = False
-    st.session_state.error_start_time = time.time()  # start countdown
+    st.session_state.error_start_time = time.time()
+
 
 # -----------------------------
-# Error Popup with Timestamp Countdown
+# Error Popup (Countdown)
 # -----------------------------
 if st.session_state.show_error and st.session_state.error_start_time:
+
     elapsed = int(time.time() - st.session_state.error_start_time)
     remaining = ERROR_DURATION - elapsed
 
+
     if remaining > 0:
-        popup_placeholder = st.empty()
-        popup_placeholder.markdown(
+
+        st.markdown(
             f"""
             <div class="popup-container">
                 <div class="popup-box">
-                    <div class="popup-title">⚠️ SYSTEM ERROR</div>
+
+                    <div class="popup-title">
+                        ⚠️ SYSTEM ERROR
+                    </div>
+
                     <div class="popup-text">
-                        ❌ ERROR: You cannot choose that option.<br>
-                        Please try again 💖<br>
+                        ❌ ERROR: You cannot choose that option.<br><br>
+                        Please try again 💖<br><br>
                         (Closing in {remaining} seconds)
                     </div>
+
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
-        # trigger a rerun after 1 second automatically
-        st.experimental_rerun()
+
     else:
-        # countdown finished
+        # Hide popup
         st.session_state.show_error = False
         st.session_state.error_start_time = None
 
+
 # -----------------------------
-# Show GIFs if Yes
+# Show GIFs
 # -----------------------------
 if st.session_state.show_gifs:
+
     st.markdown("---")
+
     st.markdown(
         "<div class='gif-caption'>Us 💖</div>",
         unsafe_allow_html=True
     )
 
-    gif1_path = os.path.join("Gifs", "Us_1.gif")
-    gif2_path = os.path.join("Gifs", "Us_2.gif")
+    gif1 = os.path.join("Gifs", "Us_1.gif")
+    gif2 = os.path.join("Gifs", "Us_2.gif")
 
     colA, colB = st.columns(2)
+
     with colA:
-        st.image(gif1_path, use_container_width=True)
+        st.image(gif1, use_container_width=True)
+
     with colB:
-        st.image(gif2_path, use_container_width=True)
+        st.image(gif2, use_container_width=True)
 
     st.markdown(
         "<div class='gif-caption'>I love you so much ❤️😘</div>",
